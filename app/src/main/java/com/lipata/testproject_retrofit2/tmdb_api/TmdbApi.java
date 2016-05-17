@@ -6,6 +6,8 @@ import com.lipata.testproject_retrofit2.APIKeys;
 import com.lipata.testproject_retrofit2.MainActivityFragment;
 import com.lipata.testproject_retrofit2.tmdb_api.model.ApiResponse;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,9 +34,19 @@ public class TmdbApi {
 
     public void callTmdbApi(){
 
+
+        // Logger
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.addInterceptor(httpLoggingInterceptor);
+        OkHttpClient okHttpClient = builder.build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
                 .build();
 
         EndpointInterface apiService =

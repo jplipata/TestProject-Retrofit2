@@ -7,6 +7,7 @@ import com.lipata.testproject_retrofit2.MainActivityFragment;
 import com.lipata.testproject_retrofit2.yelp_api.model.YelpResponse;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,11 +32,17 @@ public class YelpApi {
 
     public void callYelpApi(String term, String location, String radius){
 
+        // OAuth
         OkHttpOAuthConsumer consumer = new OkHttpOAuthConsumer(APIKeys.Yelp.CONSUMER_KEY, APIKeys.Yelp.CONSUMER_SECRET);
         consumer.setTokenWithSecret(APIKeys.Yelp.TOKEN, APIKeys.Yelp.TOKEN_SECRET);
 
+        // Logger
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(new SigningInterceptor(consumer))
+                .addInterceptor(httpLoggingInterceptor) // As per tutorial: We recommend to add logging as the last interceptor, because this will also log the information which you added with previous interceptors to your request.
                 .build();
 
         Retrofit retrofit = new Retrofit.Builder()
